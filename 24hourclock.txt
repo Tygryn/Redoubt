@@ -1,0 +1,79 @@
+#include <iostream>
+#include <string.h>
+#include <iomanip>
+using namespace std;
+//declaring two auxiliary functions that will be used by main
+bool isValidHour(int);
+void convert_and_show(int);
+
+int main(){
+    int hour_24;
+    cout << "Insert the hour in 24 format: ";
+    //receive the input
+    cin >> hour_24;
+    // check if the hour provided is valid
+    if(!isValidHour(hour_24)){
+        // if it's not, print a message and stops the program
+        cout << "Invalid format" << endl;
+        return 0;
+    }
+    // assuming that 2400 is valid, it must be converted to 0000 (there's no equivalence in the tabel)
+    if(hour_24 == 2400){
+        hour_24 = 0000;
+    }
+    // calls the function that convert and display the hour in 12-hour format
+    convert_and_show(hour_24);
+    return 0;
+}
+
+void convert_and_show(int hour){
+    // declare variables that will store the converted hour
+    int first_digits;
+    int last_digits;
+    string am_or_pm;
+    // the last 2 digits is the same as the 24-hour format
+    last_digits = hour % 100;
+    // test each case
+    if(hour >= 0 && hour <= 59){
+        first_digits = 12;
+        am_or_pm = "AM";
+    }
+    else if(hour >= 100 && hour <= 1159){
+        // integer division
+        first_digits = hour/100;
+        am_or_pm = "AM";
+    }
+    else if(hour >= 1200 && hour <= 1259){
+        first_digits = 12;
+        am_or_pm = "PM";
+    }
+    else{
+        first_digits = hour/100 - 12;
+        am_or_pm = "PM";
+    }
+    //show hour in 24-format
+    cout << hour/100 << ":" << setfill('0') << setw(2) << hour%100 << endl;
+    // output the hour: each part is separated
+    // I'm using setfill() and setw() to force the last_digit to have 2 digits
+    // otherwise, it would print 12:1 PM instead of 12:01 PM
+    cout << first_digits << ":" << setfill('0') << setw(2) << last_digits << " " << am_or_pm << endl;
+}
+
+bool isValidHour(int hour){
+    // the first requirement: hour must be in [0, 2400]
+    if(hour < 0 || hour > 2400){
+        // otherwise, return false
+        return false;
+    }
+    else{
+        //get last two digits
+        // the operator % returns the rest of the division hour/100, in this case, the last 2 digits
+        int last_digits = hour % 100;
+        // check if it's not greater than 59.
+        if(last_digits > 59){
+            return false;
+        }
+    }
+    // if passed the tests, it's valid
+    return true;
+}
